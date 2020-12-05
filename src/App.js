@@ -2,19 +2,21 @@ import React from "react";
 import "./App.css";
 import Header from "./Header";
 import Home from "./Home";
-import { BrowswerRouter as Router, Switch, Route } from "react-router-dom";
+import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
+// import { Router, Switch, Route } from "react-router-dom";
+import Checkout from "./Checkout";
 
 function App() {
   return (
     <Router>
       <div className="app">
+        {/* placing the header here outside of the switch renders it regardless of page you are on */}
+        <Header />
         <Switch>
-          <Route path="/">
-            <Header />
-            <Home />
-          </Route>
           <Route path="/checkout">
-            <Header />
+            <Checkout />
+          </Route>
+          <Route path="/">
             <Home />
           </Route>
         </Switch>
