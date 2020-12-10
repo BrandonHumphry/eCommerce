@@ -7,6 +7,7 @@ export const initialState = {
 
 // reducer pushes/pulls (completes) the action into the data layer, its always listening for a dispatch
 const reducer = (state, action) => {
+  console.log(action);
   switch (action.type) {
     case "ADD_TO_BASKET":
       return {
