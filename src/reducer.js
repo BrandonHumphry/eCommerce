@@ -5,6 +5,10 @@ export const initialState = {
   basket: []
 };
 
+// Selector
+export const getBasketTotal = basket =>
+  basket?.reduce((amount, item) => item.price + amount, 0);
+
 // reducer pushes/pulls (completes) the action into the data layer, its always listening for a dispatch
 const reducer = (state, action) => {
   console.log(action);
