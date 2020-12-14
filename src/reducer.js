@@ -20,6 +20,29 @@ const reducer = (state, action) => {
         // whatever the basket currently was plus whatever action.item is, in this case we added to our basket
         basket: [...state.basket, action.item]
       };
+    case "REMOVE_FROM_BASKET":
+      // get the state and find the index (go through basket items and finds the first match to action.id)
+      //   whatever basket currently was
+      const index = state.basket.findIndex(
+        basketItem => basketItem.id === action.id
+      );
+      // make a copy of current basket
+      let newBasket = [...state.basket];
+
+      if (index >= 0) {
+        // go newBasket and splice at whichever element you click "remove from Basket" (remove by 1)
+        newBasket.splice(index, 1);
+      } else {
+        console.warn(
+          `Cant remove product (id: ${action.id}) as its not in the basket.`
+        );
+      }
+
+      return {
+        ...state,
+        basket: newBasket
+      };
+
     default:
       return state;
   }
