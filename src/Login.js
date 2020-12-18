@@ -1,8 +1,11 @@
 import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useHistory } from "react-router-dom";
 import "./Login.css";
+import { auth } from "./firebase";
 
 function Login() {
+  // history will let us programmatically change URL
+  const history = useHistory();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
@@ -13,6 +16,21 @@ function Login() {
   };
   const Register = event => {
     event.preventDefault();
+    // this is creating a user with email and password using state from above
+    auth
+      .createUserWithEmailAndPassword(email, password)
+      .then(
+        // if successful, take the object it gives us and console.log that info,
+        auth => {
+          console.log(auth);
+          //  then redirect user to home
+          if (auth) {
+            history.push("/");
+          }
+        }
+      )
+      // if theres an error alert why
+      .catch(error => alert(error.message));
 
     // firebase register happens here
   };
