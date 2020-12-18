@@ -12,6 +12,13 @@ function Login() {
   const signIn = event => {
     event.preventDefault();
 
+    auth
+      .signInWithEmailAndPassword(email, password)
+      .then(auth => {
+        history.push("/");
+      })
+      .catch(error => alert(error.message));
+
     // firebase login happens here
   };
   const Register = event => {
