@@ -1,6 +1,7 @@
 .checkoutProduct {
   display: flex;
-  margin: 20px 0 20px 0;
+  margin-top: 20px;
+  margin-bottom: 20px;
 }
 
 .checkoutProduct__info {
@@ -25,7 +26,7 @@
   display: flex;
 }
 
-.checkoutProduct_title {
+.checkoutProduct__title {
   font-size: 17px;
   font-weight: 800;
 }
