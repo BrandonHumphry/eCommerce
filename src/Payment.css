@@ -26,7 +26,8 @@
   flex: 0.2;
 }
 .payment__address,
-.payment__items {
+.payment__items,
+.payment__details {
   /* title should take up 80% */
   flex: 0.8;
 }

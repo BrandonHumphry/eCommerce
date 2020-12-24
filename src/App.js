@@ -9,6 +9,12 @@ import Login from "./Login";
 import { auth } from "./firebase";
 import { useStateValue } from "./StateProvider";
 import Payment from "./Payment";
+import { loadStripe } from "@stripe/stripe-js";
+import { Elements } from "@stripe/react-stripe-js";
+
+const promise = loadStripe(
+  "pk_test_51I1nOeEomOUdbwLB0eKLHa6ngaOc0ZUElq8wCx5eBQPlxdEVyQaeAkGpjLx5A5wtdEOZkj6KNBvYXTp5GbGSIzfA00ZdUVXMnT"
+);
 
 function App() {
   // context api for state
@@ -50,7 +56,10 @@ function App() {
           </Route>
           <Route path="/payment">
             <Header />
-            <Payment />
+            {/* using higher order function to wrap Payment */}
+            <Elements stripe={promise}>
+              <Payment />
+            </Elements>
             <h1>payment</h1>
           </Route>
           <Route path="/">
