@@ -1,24 +1,62 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import "./Payment.css";
 import { useStateValue } from "./StateProvider";
 import CheckoutProduct from "./CheckoutProduct";
-import { Link } from "react-router-dom";
+import { Link, useHistory } from "react-router-dom";
 import { CardElement, useElements, useStripe } from "@stripe/react-stripe-js";
 import CurrencyFormat from "react-currency-format";
 import { getBasketTotal } from "./reducer";
+import axios from "./axios";
 
 function Payment() {
   const [{ basket, user }, dispatch] = useStateValue();
+  const history = useHistory();
 
   // use these hooks below
   const stripe = useStripe();
   const elements = useElements();
 
+  const [succeeded, setSucceeded] = useState(false);
+  const [processing, setProcessing] = useState("");
   const [error, setError] = useState(null);
   const [disabled, setDisabled] = useState(true);
+  const [clientSectet, setClientSecret] = useState(true);
 
-  const handleSubmit = event => {
+  useEffect(() => {
+    // generate secret for stripe that allows us to charge a customer
+    const getClientSecret = async () => {
+      const response = await axios({
+        method: "post",
+        // stripe expects total in currencies subunits so ex: multiple by 100 to get .00
+        url: `payments/create?total=${getBasketTotal(basket) * 100}`
+      });
+      setClientSecret(response.data.clientSecret);
+    };
+    getClientSecret();
+  }, [basket]);
+
+  const handleSubmit = async event => {
     // some fancy stripe stuff here
+    // stop refreshing
+    event.preventDefault();
+    // only can click buy once and then it stops
+    setProcessing(true);
+
+    // you need to tell stripe (or any processing software you're using)
+    // a client secret to let you know you want to send money
+    const payload = await stripe
+      .confirmCardPayment(clientSectet, {
+        payment_method: {
+          car: elements.getElement(CardElement)
+        }
+      })
+      .then(({ paymentIntent }) => {
+        // paymentIntent = payment confirmation
+        setSucceeded(true);
+        setError(null);
+        setProcessing(false);
+        history.replace("/orders");
+      });
   };
 
   const handleChange = event => {
@@ -85,7 +123,12 @@ function Payment() {
                   thousandsSeparator={true}
                   prefix={"$"}
                 />
+                <button disabled={processing || disabled || succeeded}>
+                  <span>{processing ? <p>Processing...</p> : "Buy Now"}</span>
+                </button>
               </div>
+              {/* errors */}
+              {error && <div>{error}</div>}
             </form>
           </div>
         </div>
