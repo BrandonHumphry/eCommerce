@@ -28,6 +28,10 @@ app.post("payments/create", async (request, response) => {
     amount: total,
     currency: "usd"
   });
+  // Response = OK, created
+  response.status(201).send({
+    clientSecret: paymentIntent.client_secret
+  });
 });
 // API - Listen command for cloud functions on https request
 exports.api = functions.https.onRequest(app);
