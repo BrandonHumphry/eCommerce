@@ -11,6 +11,7 @@ import { useStateValue } from "./StateProvider";
 import Payment from "./Payment";
 import { loadStripe } from "@stripe/stripe-js";
 import { Elements } from "@stripe/react-stripe-js";
+import Orders from "./Orders";
 
 const promise = loadStripe(
   "pk_test_51I1nOeEomOUdbwLB0eKLHa6ngaOc0ZUElq8wCx5eBQPlxdEVyQaeAkGpjLx5A5wtdEOZkj6KNBvYXTp5GbGSIzfA00ZdUVXMnT"
@@ -44,8 +45,6 @@ function App() {
   return (
     <Router>
       <div className="app">
-        {/* placing the header here outside of the switch because it should be on every page */}
-        {/* <Header /> */}
         <Switch>
           <Route path="/login">
             <Login />
@@ -61,6 +60,10 @@ function App() {
               <Payment />
             </Elements>
             <h1>payment</h1>
+          </Route>
+          <Route path="/orders">
+            <Header />
+            <Orders />
           </Route>
           <Route path="/">
             <Header />

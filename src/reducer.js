@@ -21,6 +21,14 @@ const reducer = (state, action) => {
         // whatever the basket currently was plus whatever action.item is, in this case we added to our basket
         basket: [...state.basket, action.item]
       };
+
+    case "EMPTY_BASKET":
+      // below means keep the state but empty the basket
+      return {
+        ...state,
+        basket: []
+      };
+
     case "REMOVE_FROM_BASKET":
       // get the state and find the index (go through basket items and finds the first match to action.id)
       //   whatever basket currently was

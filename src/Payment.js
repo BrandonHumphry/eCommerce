@@ -7,6 +7,7 @@ import { CardElement, useElements, useStripe } from "@stripe/react-stripe-js";
 import CurrencyFormat from "react-currency-format";
 import { getBasketTotal } from "./reducer";
 import axios from "./axios";
+import { db } from "./firebase";
 
 function Payment() {
   const [{ basket, user }, dispatch] = useStateValue();
@@ -20,7 +21,7 @@ function Payment() {
   const [processing, setProcessing] = useState("");
   const [error, setError] = useState(null);
   const [disabled, setDisabled] = useState(true);
-  const [clientSectet, setClientSecret] = useState(true);
+  const [clientSecret, setClientSecret] = useState(true);
 
   useEffect(() => {
     // generate secret for stripe that allows us to charge a customer
@@ -28,12 +29,14 @@ function Payment() {
       const response = await axios({
         method: "post",
         // stripe expects total in currencies subunits so ex: multiple by 100 to get .00
-        url: `payments/create?total=${getBasketTotal(basket) * 100}`
+        url: `/payments/create?total=${getBasketTotal(basket) * 100}`
       });
       setClientSecret(response.data.clientSecret);
     };
     getClientSecret();
   }, [basket]);
+
+  console.log("THE SECRET IS >>>", clientSecret);
 
   const handleSubmit = async event => {
     // some fancy stripe stuff here
@@ -45,16 +48,38 @@ function Payment() {
     // you need to tell stripe (or any processing software you're using)
     // a client secret to let you know you want to send money
     const payload = await stripe
-      .confirmCardPayment(clientSectet, {
+      .confirmCardPayment(clientSecret, {
         payment_method: {
-          car: elements.getElement(CardElement)
+          card: elements.getElement(CardElement)
         }
       })
       .then(({ paymentIntent }) => {
         // paymentIntent = payment confirmation
+
+        // when the order comes back successful, reach into the db of users
+        db.collection("users")
+          // to that specific user
+          .doc(user?.uid)
+          // to their orders
+          .collection("orders")
+          // create a document with a paymentIntent.id
+          .doc(paymentIntent.id)
+          // add this info below to it
+          .set({
+            basket: basket,
+            amount: paymentIntent.amount,
+            create: paymentIntent.created
+          });
+
         setSucceeded(true);
         setError(null);
         setProcessing(false);
+
+        // this dispatch is to empty the basket after order is placed, the type lives in reducer.js
+        dispatch({
+          type: "EMPTY_BASKET"
+        });
+
         history.replace("/orders");
       });
   };

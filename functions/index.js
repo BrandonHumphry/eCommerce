@@ -22,7 +22,7 @@ app.get("/brandon", (request, response) =>
 app.post("payments/create", async (request, response) => {
   const total = request.query.total;
 
-  console.log("payment request received for this amount >", total);
+  console.log("payment request received for this amount >>>>>", total);
 
   const paymentIntent = await stripe.paymentIntents.create({
     amount: total,
