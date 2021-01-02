@@ -144,7 +144,7 @@ function Payment() {
                   renderText={value => <h3>Order Total: {value}</h3>}
                   decimalScale={2}
                   value={getBasketTotal(basket)}
-                  displaytype={"text"}
+                  displayType={"text"}
                   thousandsSeparator={true}
                   prefix={"$"}
                 />
